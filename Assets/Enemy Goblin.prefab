@@ -11,11 +11,11 @@ GameObject:
   - component: {fileID: 1814333223572574893}
   - component: {fileID: 1442580876499753156}
   - component: {fileID: 622401850321039980}
-  - component: {fileID: 5494409738900012412}
-  - component: {fileID: 8423650356059549205}
+  - component: {fileID: 582689721378215123}
+  - component: {fileID: 2152358343253055964}
   - component: {fileID: 6290047516891792118}
   - component: {fileID: 7575767621313227481}
-  - component: {fileID: 2682986171396206131}
+  - component: {fileID: 5836124086651094852}
   m_Layer: 0
   m_Name: Enemy Goblin
   m_TagString: Enemy
@@ -33,7 +33,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -33.09, y: 5.12, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 1}
+  m_LocalScale: {x: 2.4, y: 2.4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -99,7 +99,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6597231878720744832}
-  m_BodyType: 1
+  m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -116,9 +116,9 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 1
   m_SleepingMode: 1
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
   m_Constraints: 4
---- !u!114 &5494409738900012412
+--- !u!114 &582689721378215123
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -132,7 +132,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   contactDamage: 1
   damageCooldown: 1
---- !u!114 &8423650356059549205
+--- !u!114 &2152358343253055964
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -167,7 +167,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7fba7c2e39a2cca4da51f5f2ad7f65d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 2.3
+  speed: 2
   damage: 1
 --- !u!61 &7575767621313227481
 BoxCollider2D:
@@ -201,7 +201,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.0327425, y: -0.10966444}
+  m_Offset: {x: 0.027171433, y: -0.10210212}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -212,9 +212,9 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.15621376, y: 0.30189228}
+  m_Size: {x: 0.16670546, y: 0.3522879}
   m_EdgeRadius: 0
---- !u!95 &2682986171396206131
+--- !u!95 &5836124086651094852
 Animator:
   serializedVersion: 5
   m_ObjectHideFlags: 0
