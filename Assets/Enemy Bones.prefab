@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 1814333223572574893}
   - component: {fileID: 1442580876499753156}
   - component: {fileID: 622401850321039980}
+  - component: {fileID: 582689721378215123}
+  - component: {fileID: 2152358343253055964}
   - component: {fileID: 6290047516891792118}
   - component: {fileID: 7575767621313227481}
   - component: {fileID: 5836124086651094852}
@@ -116,6 +118,43 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &582689721378215123
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6597231878720744832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c854120a6fb93741ac13ba0628a9f82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  contactDamage: 2
+  damageCooldown: 1
+--- !u!114 &2152358343253055964
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6597231878720744832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c829bd408efd7e4887d700b85190e0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 10
+  currentHealth: 0
+  OnDeath:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDamage:
+    m_PersistentCalls:
+      m_Calls: []
+  OnHeal:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &6290047516891792118
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -129,6 +168,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 1.7
+  flipThreshold: 0.1
+  damage: 2
 --- !u!61 &7575767621313227481
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -161,7 +202,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.055951737, y: -0.011190698}
+  m_Offset: {x: 0.042867325, y: -0.017733231}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -172,7 +213,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.1614825, y: 0.49883977}
+  m_Size: {x: 0.13531367, y: 0.34836373}
   m_EdgeRadius: 0
 --- !u!95 &5836124086651094852
 Animator:

@@ -1,9 +1,15 @@
 using UnityEngine;
+using System.Collections;
 
+[RequireComponent(typeof(Rigidbody2D))]
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Movimiento")]
     public float moveSpeed = 2.5f;
+
+    [Header("Vida")]
+    public int maxHealth = 3;
+    public int currentHealth;
 
     private Rigidbody2D rb;
     private Animator animator;
@@ -17,22 +23,21 @@ public class PlayerMovement : MonoBehaviour
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
 
-        // Sin gravedad (estilo Vampire Survivors)
+        currentHealth = maxHealth;
+
         rb.gravityScale = 0f;
         rb.freezeRotation = true;
     }
 
     void Update()
     {
-        // Leer input de movimiento
         moveInput.x = Input.GetAxisRaw("Horizontal");
         moveInput.y = Input.GetAxisRaw("Vertical");
 
-        // Actualizar parámetro "Speed" (se usa para pasar de Idle a Run)
         float speedValue = moveInput.sqrMagnitude;
-        animator.SetFloat("Speed", speedValue);
+        if (animator != null)
+            animator.SetFloat("Speed", speedValue);
 
-        // Voltear sprite según dirección horizontal
         if (moveInput.x > 0.1f)
             spriteRenderer.flipX = false;
         else if (moveInput.x < -0.1f)
@@ -41,8 +46,36 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        // Movimiento sin aceleración ni gravedad
-        rb.MovePosition(rb.position + moveInput.normalized * moveSpeed * Time.fixedDeltaTime);
+        rb.velocity = moveInput.normalized * moveSpeed;
+    }
+
+    public void TakeDamage(int amount)
+    {
+        currentHealth -= amount;
+        if (currentHealth <= 0)
+        {
+            Die();
+        }
+        else
+        {
+            StartCoroutine(FlashRed(0.5f));
+        }
+    }
+
+    IEnumerator FlashRed(float duration)
+    {
+        if (spriteRenderer == null) yield break;
+
+        Color original = spriteRenderer.color;
+        spriteRenderer.color = Color.red;
+        yield return new WaitForSeconds(duration);
+        spriteRenderer.color = original;
+    }
+
+    void Die()
+    {
+        Debug.Log("Jugador muerto");
+        // Reinicia la escena o destruye el jugador
     }
 }
 

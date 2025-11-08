@@ -5,28 +5,24 @@ public class Enemy : MonoBehaviour
 {
     [Header("Movimiento")]
     public float speed = 2.0f;
-    public float flipThreshold = 0.1f; // umbral para decidir flip por X
+    public int damage = 1;
 
-    Rigidbody2D rb;
-    Transform player;
+    private Rigidbody2D rb;
+    private Transform player;
 
-    // visual & anim
-    SpriteRenderer spriteRenderer;
-    Animator animator;
+    private SpriteRenderer spriteRenderer;
+    private Animator animator;
 
-    // hashes para animación
-    readonly int hSpeed = Animator.StringToHash("Speed");
-    readonly int hMoveX = Animator.StringToHash("MoveX");
-    readonly int hMoveY = Animator.StringToHash("MoveY");
+    private readonly int hSpeed = Animator.StringToHash("Speed");
+    private readonly int hMoveX = Animator.StringToHash("MoveX");
+    private readonly int hMoveY = Animator.StringToHash("MoveY");
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        // recomendamos Kinematic para movimiento controlado por código
-        // rb.bodyType = RigidbodyType2D.Kinematic; // descomenta si quieres kinematic
         rb.freezeRotation = true;
+        rb.gravityScale = 0f;
 
-        // buscar components en este GO o hijos (más robusto)
         spriteRenderer = GetComponent<SpriteRenderer>();
         if (spriteRenderer == null) spriteRenderer = GetComponentInChildren<SpriteRenderer>();
 
@@ -39,7 +35,6 @@ public class Enemy : MonoBehaviour
         var p = GameObject.FindGameObjectWithTag("Player");
         player = (p != null) ? p.transform : null;
 
-        // asegurarnos de que la visual esté visible al spawnear
         if (spriteRenderer != null)
         {
             spriteRenderer.enabled = true;
@@ -53,41 +48,32 @@ public class Enemy : MonoBehaviour
     {
         if (player == null) return;
 
-        Vector2 dir = ((Vector2)player.position - rb.position);
-        float dist = dir.magnitude;
-        if (dist > 0.001f)
+        Vector2 dir = (player.position - transform.position).normalized;
+        rb.velocity = dir * speed;
+
+        // Flip del sprite
+        if (spriteRenderer != null)
+            spriteRenderer.flipX = dir.x < 0;
+
+        // Animación
+        if (animator != null)
         {
-            Vector2 dirNorm = dir / dist;
-
-            // mover
-            Vector2 targetPos = rb.position + dirNorm * speed * Time.fixedDeltaTime;
-            rb.MovePosition(targetPos);
-
-            // flip visual por X (no modificar transform.localScale)
-            if (spriteRenderer != null)
-            {
-                if (dirNorm.x > flipThreshold) spriteRenderer.flipX = false;
-                else if (dirNorm.x < -flipThreshold) spriteRenderer.flipX = true;
-            }
-
-            // actualizar animator (si existe) - usamos velocidad real y direccionalidad
-            if (animator != null)
-            {
-                float speedValue = dirNorm.magnitude * speed; // será = speed, pero sirve si cambias lógica
-                animator.SetFloat(hSpeed, speedValue);
-                animator.SetFloat(hMoveX, dirNorm.x);
-                animator.SetFloat(hMoveY, dirNorm.y);
-            }
+            animator.SetFloat(hSpeed, rb.velocity.magnitude);
+            animator.SetFloat(hMoveX, dir.x);
+            animator.SetFloat(hMoveY, dir.y);
         }
-        else
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
         {
-            // si estamos prácticamente encima, dejamos Speed a 0
-            if (animator != null)
-            {
-                animator.SetFloat(hSpeed, 0f);
-            }
+            PlayerMovement playerScript = collision.gameObject.GetComponent<PlayerMovement>();
+            if (playerScript != null)
+                playerScript.TakeDamage(damage);
         }
     }
 }
+
 
 
