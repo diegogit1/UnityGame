@@ -75,10 +75,12 @@ public class PlayerMovement : MonoBehaviour
     void Die()
     {
         Debug.Log("Jugador muerto");
-        // avisar al GameManager
-        if (GameManager.Instance != null) GameManager.Instance.GameOver();
-        // opcional: bloquear controles / reproducir anim etc.
+        // avisar al GameManager para que guarde y cargue GameOver
+        if (GameManager.Instance != null)
+            GameManager.Instance.GameOver();
+        // opcional: desactivar controles, anim, etc.
     }
+
 
 }
 

@@ -1,15 +1,16 @@
 using UnityEngine;
 using TMPro;
 
+[RequireComponent(typeof(Canvas))]
 public class HUDController : MonoBehaviour
 {
-    [Header("Referencias UI")]
-    public TextMeshProUGUI livesText;      // "Vidas: X"
-    public TextMeshProUGUI timeText;       // "Tiempo: mm:ss"
-    public TextMeshProUGUI scoreText;      // opcional si quieres mostrar score
+    [Header("UI refs")]
+    public TextMeshProUGUI livesText;    // arrastra TMP lives
+    public TextMeshProUGUI timeText;     // arrastra TMP time
+    public TextMeshProUGUI scoreText;    // arrastra TMP score (opcional)
 
-    [Header("Referencia jugador (opcional)")]
-    public PlayerMovement player; // si lo dejas vacío buscará por tag "Player"
+    [Header("Player reference (opcional)")]
+    public PlayerMovement player; // si no asignas, buscará por tag "Player" en Start()
 
     void Start()
     {
@@ -18,45 +19,45 @@ public class HUDController : MonoBehaviour
             var go = GameObject.FindGameObjectWithTag("Player");
             if (go != null) player = go.GetComponent<PlayerMovement>();
         }
-
-        // inicial refresh
-        RefreshAll();
     }
 
     void Update()
     {
-        RefreshAll();
+        Refresh();
     }
 
-    void RefreshAll()
+    void Refresh()
     {
         UpdateLives();
         UpdateTime();
-        // UpdateScore() si lo implementas
+        UpdateScore();
     }
 
     void UpdateLives()
     {
         if (livesText == null) return;
-
-        int cur = 0;
-        int max = 0;
         if (player != null)
-        {
-            // usamos campos públicos en PlayerMovement (asegúrate de que currentHealth es accesible)
-            cur = player.currentHealth;
-            max = player.maxHealth;
-        }
-        livesText.text = $"HP: {cur}/{max}";
+            livesText.text = $"HP: {player.currentHealth}/{player.maxHealth}";
+        else
+            livesText.text = "HP: ?";
     }
 
     void UpdateTime()
     {
-        if (timeText == null || GameManager.Instance == null) return;
+        if (timeText == null) return;
+        if (GameManager.Instance == null) { timeText.text = "--:--"; return; }
         float t = GameManager.Instance.TimeRemaining;
-        int minutes = Mathf.FloorToInt(t / 60f);
-        int seconds = Mathf.FloorToInt(t % 60f);
-        timeText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+        int mm = Mathf.FloorToInt(t / 60f);
+        int ss = Mathf.FloorToInt(t % 60f);
+        timeText.text = string.Format("{0:00}:{1:00}", mm, ss);
+    }
+
+    void UpdateScore()
+    {
+        if (scoreText == null) return;
+        if (GameManager.Instance != null)
+            scoreText.text = $"Score: {GameManager.Instance.GetCurrentScore()}";
     }
 }
+
 

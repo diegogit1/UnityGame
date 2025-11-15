@@ -7,6 +7,12 @@ public class Enemy : MonoBehaviour
     public float speed = 2.0f;
     public int damage = 1;
 
+    [Header("Puntos")]
+    [Tooltip("Puntos que da este enemigo al morir")]
+    public int pointValue = 10;
+    [Tooltip("Si usas pooling (reusar objetos) pon false y maneja la suma en tu sistema de muerte")]
+    public bool awardPointsOnDestroy = true;
+
     private Rigidbody2D rb;
     private Transform player;
 
@@ -73,7 +79,21 @@ public class Enemy : MonoBehaviour
                 playerScript.TakeDamage(damage);
         }
     }
+
+    // Si el enemigo es destruido (Destroy), sumamos puntos aquí.
+    // Filtramos para no sumar nada cuando se sale del Play mode en el Editor.
+    void OnDestroy()
+    {
+        if (!awardPointsOnDestroy) return;
+        if (!Application.isPlaying) return; // evita sumar al parar el Play Mode
+
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.AddScore(pointValue);
+        }
+    }
 }
+
 
 
 
