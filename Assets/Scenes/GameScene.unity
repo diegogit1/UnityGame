@@ -326,6 +326,53 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8fd7cba4384381e4aad6dc90158fc9d5, type: 3}
+--- !u!1 &411308400
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 411308402}
+  - component: {fileID: 411308401}
+  m_Layer: 0
+  m_Name: CoinSpawn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &411308401
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 411308400}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9875e279e5759f746a5c5dfce4d76cfb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  coinPrefab: {fileID: 100000, guid: 49e6ee33250214a9facc214f3a2fecb7, type: 3}
+  amount: 10
+  areaSize: {x: 34, y: 19}
+--- !u!4 &411308402
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 411308400}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -146.95, y: 44.18, z: 0.47510272}
+  m_LocalScale: {x: 1.175, y: 1.4375, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &448853555
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -21730,10 +21777,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca0b7b5b1a5eab141bdaf3fa5387ef4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameSceneName: GameScene
   gameOverSceneName: GameOver
   victorySceneName: Victory
-  levelTimeSeconds: 60
+  levelDurationSeconds: 120
   autoStartTimer: 1
+  currentScore: 0
+  lastScoreKey: LastScore
+  bestScoreKey: BestScore
+  saveLastScoreOnEnd: 1
+  saveBestScoreOnEnd: 1
+  OnGameStart:
+    m_PersistentCalls:
+      m_Calls: []
+  OnGameOver:
+    m_PersistentCalls:
+      m_Calls: []
+  OnVictory:
+    m_PersistentCalls:
+      m_Calls: []
+  OnTimerTick:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!4 &738993448
 Transform:
   m_ObjectHideFlags: 0
@@ -22610,7 +22675,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1245189047}
-  m_BodyType: 1
+  m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -22872,6 +22937,62 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1553154786
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1553154788}
+  - component: {fileID: 1553154787}
+  m_Layer: 0
+  m_Name: AbilitySystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1553154787
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1553154786}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f15d45abb304e74c913ab2fcd21623f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  abilities:
+  - id: 
+    displayName: Speed
+    description: 
+    icon: {fileID: 21300000, guid: 238e1a1d61dab6444ae3b1b5be86c78f, type: 3}
+    intValue: 0
+    floatValue: 0
+    maxLevel: 0
+  panel: {fileID: 0}
+  optionsParent: {fileID: 0}
+  optionButtonPrefab: {fileID: 0}
+  optionsToShow: 3
+--- !u!4 &1553154788
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1553154786}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -147.05667, y: 46.002663, z: -0.05746956}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -23206,6 +23327,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1907136021}
   - component: {fileID: 1907136020}
+  - component: {fileID: 1907136022}
   m_Layer: 0
   m_Name: GameHUD
   m_TagString: Untagged
@@ -23229,21 +23351,48 @@ MonoBehaviour:
   timeText: {fileID: 494715680}
   scoreText: {fileID: 0}
   player: {fileID: 1245189051}
---- !u!4 &1907136021
-Transform:
+--- !u!224 &1907136021
+RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1907136019}
-  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 960, y: 540, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 960, y: 540}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!223 &1907136022
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1907136019}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_UpdateRectTransformForStandalone: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
 --- !u!1 &2062654888
 GameObject:
   m_ObjectHideFlags: 0
@@ -23295,6 +23444,7 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 1907136021}
   - {fileID: 619394802}
   - {fileID: 667627736}
   - {fileID: 603792931}
@@ -23319,5 +23469,6 @@ SceneRoots:
   - {fileID: 738993448}
   - {fileID: 1469280499}
   - {fileID: 1109031599}
-  - {fileID: 1907136021}
   - {fileID: 2062654890}
+  - {fileID: 411308402}
+  - {fileID: 1553154788}
