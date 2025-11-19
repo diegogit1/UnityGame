@@ -1,9 +1,14 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
 
+/// <summary>
+/// Sistema sencillo de abilities aleatorias. 
+/// - Define las abilities en el inspector (icono/nombre/descripción/valores).
+/// - Llamar ApplyRandomAbility() para aplicar una mejora aleatoria al jugador.
+/// - Si la ability ya está, sube su nivel hasta maxLevel.
+/// - No hay UI aquí; solo lógica. Ideal para prototipar.
+/// </summary>
 public class AbilitySystem : MonoBehaviour
 {
     public static AbilitySystem Instance { get; private set; }
@@ -15,145 +20,138 @@ public class AbilitySystem : MonoBehaviour
         public string displayName;
         [TextArea] public string description;
         public Sprite icon;
-        public int intValue = 1;          // valor base (se usa según la lógica)
-        public float floatValue = 0.5f;   // valor base float
+        public int intValue = 1;          // valor base entero (ej. +1 daño)
+        public float floatValue = 0.2f;   // valor base float (ej. -0.1s cadencia)
         public int maxLevel = 5;
     }
 
-    [Header("Definición de habilidades (edítalas aquí)")]
+    [Header("Lista de abilities (edítalas aquí)")]
     public List<AbilityEntry> abilities = new List<AbilityEntry>();
 
-    [Header("UI - Picker (simple)")]
-    public GameObject panel;               // panel root del picker (inactivo por defecto)
-    public Transform optionsParent;        // contenedor donde se instancian los botones
-    public GameObject optionButtonPrefab;  // prefab simple: Button con child Image + TMP Text
+    [Header("Debug / pruebas")]
+    public bool enableDebugKey = true;
+    public KeyCode debugKey = KeyCode.R; // presiona R para aplicar una random en Play
 
-    [Header("Picker settings")]
-    public int optionsToShow = 3;
+    // Estado: niveles por id
+    private Dictionary<string, int> levels = new Dictionary<string, int>();
 
-    // estado interno: niveles por id
-    Dictionary<string, int> levels = new Dictionary<string, int>();
+    // Evento (opcional) que otros sistemas pueden suscribirse:
+    // parameters: ability id, new level
+    public event Action<string, int> OnAbilityApplied;
 
     void Awake()
     {
-        if (Instance != null && Instance != this) Destroy(gameObject);
-        else Instance = this;
+        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
+        Instance = this;
     }
 
     void Start()
     {
-        if (panel != null) panel.SetActive(false);
+        // (opcional) validaciones mínimas
+        if (abilities == null || abilities.Count == 0)
+            Debug.LogWarning("[AbilitySystemRandom] No hay abilities definidas en el inspector.");
     }
 
-    // ----------------- API pública -----------------
-    // muestra el picker con N opciones aleatorias
-    public void ShowPicker()
+    void Update()
     {
-        if (panel == null || optionButtonPrefab == null || optionsParent == null) return;
+        if (enableDebugKey && Input.GetKeyDown(debugKey))
+            ApplyRandomAbility();
+    }
 
-        panel.SetActive(true);
-
-        // limpiar antiguas opciones
-        foreach (Transform t in optionsParent) Destroy(t.gameObject);
-
-        // crear opciones
-        for (int i = 0; i < optionsToShow; i++)
+    /// <summary>
+    /// Escoge una ability aleatoria de la lista y la aplica al player.
+    /// </summary>
+    public void ApplyRandomAbility()
+    {
+        if (abilities == null || abilities.Count == 0)
         {
-            var entry = GetRandomAbility();
-            var go = Instantiate(optionButtonPrefab, optionsParent);
-            SetupOption(go, entry);
+            Debug.LogWarning("[AbilitySystemRandom] No hay abilities definidas.");
+            return;
         }
-    }
 
-    public void HidePicker()
-    {
-        if (panel != null) panel.SetActive(false);
-    }
-
-    // aplica habilidad por id (sube nivel si ya la tienes)
-    public void ApplyAbilityById(string id)
-    {
-        var entry = GetById(id);
-        if (entry == null) return;
-
-        levels.TryGetValue(id, out int cur);
-        if (cur >= entry.maxLevel) { Debug.Log($"{entry.displayName} at max level"); return; }
-        cur++;
-        levels[id] = cur;
-
-        // aplicar efecto concreto según id y nivel (lógica literal aquí)
-        ApplyEffect(entry, cur);
-
-        // cerrar picker después de elegir
-        HidePicker();
-    }
-
-    // ----------------- util -----------------
-    AbilityEntry GetById(string id) => abilities.Find(a => a != null && a.id == id);
-    AbilityEntry GetRandomAbility()
-    {
-        if (abilities == null || abilities.Count == 0) return null;
-        return abilities[UnityEngine.Random.Range(0, abilities.Count)];
-    }
-
-    void SetupOption(GameObject go, AbilityEntry entry)
-    {
-        // buscar componentes básicos en el prefab: Image e TextMeshProUGUI y Button
-        var img = go.GetComponentInChildren<Image>();
-        var texts = go.GetComponentsInChildren<TextMeshProUGUI>();
-        var btn = go.GetComponent<Button>();
-
-        if (img != null) img.sprite = entry != null ? entry.icon : null;
-        if (texts.Length > 0) texts[0].text = entry != null ? entry.displayName : "N/A";
-        if (texts.Length > 1) texts[1].text = entry != null ? entry.description : "";
-
-        string id = entry != null ? entry.id : "";
-        if (btn != null)
+        // elegir una al azar
+        var entry = abilities[UnityEngine.Random.Range(0, abilities.Count)];
+        if (entry == null)
         {
-            btn.onClick.RemoveAllListeners();
-            btn.onClick.AddListener(() => {
-                ApplyAbilityById(id);
-            });
+            Debug.LogWarning("[AbilitySystemRandom] Entrada nula en abilities.");
+            return;
         }
+
+        ApplyAbility(entry.id);
     }
 
-    // ----------------- Lógica de efectos (aquí está todo, sencillo) -----------------
-    // modifica tr?cctamente componentes del player (PlayerMovement y AutoAttack si existen)
+    /// <summary>
+    /// Aplica (o sube el nivel) de la ability indicada por id.
+    /// </summary>
+    public void ApplyAbility(string id)
+    {
+        var entry = abilities.Find(a => a != null && a.id == id);
+        if (entry == null)
+        {
+            Debug.LogWarning($"[AbilitySystemRandom] Ability id '{id}' no encontrada.");
+            return;
+        }
+
+        levels.TryGetValue(id, out int currentLevel);
+        if (currentLevel >= entry.maxLevel)
+        {
+            Debug.Log($"[AbilitySystemRandom] {entry.displayName} ya está en nivel máximo ({entry.maxLevel}).");
+            return;
+        }
+
+        int newLevel = currentLevel + 1;
+        levels[id] = newLevel;
+
+        // aplicar efecto concreto (casos simples — edita según tus scripts)
+        ApplyEffect(entry, newLevel);
+
+        Debug.Log($"[AbilitySystemRandom] Applied {entry.displayName} -> level {newLevel}");
+
+        // notificar
+        OnAbilityApplied?.Invoke(id, newLevel);
+    }
+
+    /// <summary>
+    /// Implementa aquí, de forma literal, lo que hace cada habilidad.
+    /// Ajusta los nombres de campos para que coincidan con tus componentes (AutoAttack, PlayerMovement, etc.).
+    /// </summary>
     void ApplyEffect(AbilityEntry entry, int level)
     {
-        if (entry == null) return;
-        float valueFloat = entry.floatValue + (level - 1) * entry.floatValue;
+        // ejemplo de cálculo simple (puedes cambiar la fórmula)
         int valueInt = entry.intValue + (level - 1) * entry.intValue;
+        float valueFloat = entry.floatValue + (level - 1) * entry.floatValue;
 
-        var player = GameObject.FindGameObjectWithTag("Player");
-        if (player == null) { Debug.Log("No player found for ability apply."); return; }
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player == null)
+        {
+            Debug.LogWarning("[AbilitySystemRandom] No se encontró GameObject con tag 'Player'.");
+            return;
+        }
 
-        // Aquí pones las implementaciones literales por id; añade cases según tus necesidades
+        // Aquí pones las implementaciones literales. Cambia los nombres de campos si tus scripts difieren.
         switch (entry.id)
         {
             case "damage":
                 {
                     var auto = player.GetComponent<AutoAttack>();
-                    if (auto != null)
-                        auto.damage += valueInt; // suma daño entero
-                    else
-                        Debug.Log("No AutoAttack component found for damage ability.");
+                    if (auto != null) auto.damage += valueInt;
+                    else Debug.Log("[AbilitySystemRandom] AutoAttack no encontrado para 'damage'.");
                 }
                 break;
 
             case "firerate":
                 {
                     var auto = player.GetComponent<AutoAttack>();
-                    if (auto != null)
-                        auto.attackInterval = Mathf.Max(0.02f, auto.attackInterval - valueFloat);
+                    if (auto != null) auto.attackInterval = Mathf.Max(0.02f, auto.attackInterval - valueFloat);
+                    else Debug.Log("[AbilitySystemRandom] AutoAttack no encontrado para 'firerate'.");
                 }
                 break;
 
             case "movespeed":
                 {
                     var pm = player.GetComponent<PlayerMovement>();
-                    if (pm != null)
-                        pm.moveSpeed += valueFloat;
+                    if (pm != null) pm.moveSpeed += valueFloat;
+                    else Debug.Log("[AbilitySystemRandom] PlayerMovement no encontrado para 'movespeed'.");
                 }
                 break;
 
@@ -163,24 +161,31 @@ public class AbilitySystem : MonoBehaviour
                     if (pm != null)
                     {
                         pm.maxHealth += valueInt;
-                        pm.currentHealth += valueInt; // curamos al mejorar max
+                        pm.currentHealth += valueInt; // curar al subir max
                     }
+                    else Debug.Log("[AbilitySystemRandom] PlayerMovement no encontrado para 'maxhealth'.");
                 }
                 break;
 
+            // Añade aquí más cases según tus ids
             default:
-                Debug.Log($"Ability id '{entry.id}' no tiene implementación. Añádela en ApplyEffect.");
+                Debug.Log($"[AbilitySystemRandom] No hay implementación para ability id '{entry.id}'. Añádela en ApplyEffect.");
                 break;
         }
-
-        Debug.Log($"Applied ability {entry.displayName} level {level}");
     }
 
-    // helper para ver nivel actual (opcional)
+    // utilidad
     public int GetLevel(string id)
     {
         levels.TryGetValue(id, out int l);
         return l;
     }
+
+    // opcional: resetear todo (útil al reiniciar nivel)
+    public void ResetAll()
+    {
+        levels.Clear();
+    }
 }
+
 
