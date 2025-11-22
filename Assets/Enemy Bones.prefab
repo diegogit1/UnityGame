@@ -131,7 +131,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   contactDamage: 2
-  damageCooldown: 1
+  damageCooldown: 3
+  hitSfx: {fileID: 8300000, guid: 88b1cbe3caa3fee4b8b103b5edd7aba9, type: 3}
 --- !u!114 &2152358343253055964
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -168,8 +169,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 1.7
-  flipThreshold: 0.1
   damage: 2
+  pointValue: 10
+  awardPointsOnDestroy: 1
+  deathSfx: {fileID: 8300000, guid: 566d2ea6240b489479a6e9fd608c2621, type: 3}
 --- !u!61 &7575767621313227481
 BoxCollider2D:
   m_ObjectHideFlags: 0

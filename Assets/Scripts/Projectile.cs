@@ -12,6 +12,10 @@ public class Projectile : MonoBehaviour
     Vector2 direction;
     float spawnTime;
 
+    [Header("Sonido")]
+    public AudioClip hitSfx;
+
+
     public void Init(Transform targetTransform, int damageAmount, float spd)
     {
         target = targetTransform;
@@ -57,7 +61,6 @@ public class Projectile : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        // evitar colisionar con el player u otras cosas si hace falta
         if (other.CompareTag("Enemy"))
         {
             var h = other.GetComponent<Health>();
@@ -65,18 +68,26 @@ public class Projectile : MonoBehaviour
             {
                 h.TakeDamage(damage);
             }
-            // efecto al impactar (anim/particulas) aquí si quieres
 
-            Destroy(gameObject); // o SetActive(false) si usas pooling
+            // SONIDO DE IMPACTO
+            if (hitSfx != null)
+            {
+                AudioSource.PlayClipAtPoint(
+                    hitSfx,
+                    Camera.main != null ? Camera.main.transform.position : transform.position
+                );
+            }
+
+            Destroy(gameObject);
         }
         else
         {
-            // opcional: si choca con muro/obstáculo, se destruye
             if (other.gameObject.layer == LayerMask.NameToLayer("Walls"))
             {
                 Destroy(gameObject);
             }
         }
     }
+
 }
 

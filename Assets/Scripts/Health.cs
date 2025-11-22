@@ -39,9 +39,22 @@ public class Health : MonoBehaviour
 
     void Die()
     {
-        // Aquí es donde destruimos el enemigo
-        Destroy(gameObject);
+        // Si el objeto tiene componente Enemy, usamos su método Die()
+        Enemy enemy = GetComponent<Enemy>();
+        if (enemy != null)
+        {
+            enemy.Die();  // suma puntos, reproduce SFX y destruye el objeto de forma segura
+        }
+        else
+        {
+            // si no es un enemigo, destruimos normalmente
+            Destroy(gameObject);
+        }
+
+        // Invocar eventos de muerte
+        OnDeath?.Invoke();
     }
+
 }
 
 

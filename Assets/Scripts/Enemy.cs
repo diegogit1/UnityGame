@@ -23,6 +23,9 @@ public class Enemy : MonoBehaviour
     private readonly int hMoveX = Animator.StringToHash("MoveX");
     private readonly int hMoveY = Animator.StringToHash("MoveY");
 
+    [Header("Sonido")]
+    public AudioClip deathSfx;
+
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -82,16 +85,48 @@ public class Enemy : MonoBehaviour
 
     // Si el enemigo es destruido (Destroy), sumamos puntos aquí.
     // Filtramos para no sumar nada cuando se sale del Play mode en el Editor.
-    void OnDestroy()
+    /*void OnDestroy()
     {
         if (!awardPointsOnDestroy) return;
-        if (!Application.isPlaying) return; // evita sumar al parar el Play Mode
+        if (!Application.isPlaying) return;
+
+        // SONIDO AL MORIR
+        if (deathSfx != null)
+        {
+            AudioSource.PlayClipAtPoint(
+                deathSfx,
+                Camera.main != null ? Camera.main.transform.position : transform.position
+            );
+        }
 
         if (GameManager.Instance != null)
         {
             GameManager.Instance.AddScore(pointValue);
         }
+    }*/
+
+
+    public void Die()
+    {
+        // Reproducir sonido
+        if (deathSfx != null)
+        {
+            AudioSource.PlayClipAtPoint(
+                deathSfx,
+                Camera.main != null ? Camera.main.transform.position : transform.position
+            );
+        }
+
+        // Sumar puntos
+        if (awardPointsOnDestroy && GameManager.Instance != null)
+        {
+            GameManager.Instance.AddScore(pointValue);
+        }
+
+        // Destruir enemigo
+        Destroy(gameObject);
     }
+
 }
 
 

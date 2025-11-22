@@ -8,6 +8,9 @@ public class EnemyContactDamage : MonoBehaviour
     [Tooltip("Tiempo mínimo entre impactos al mismo objetivo (s).")]
     public float damageCooldown = 1.0f;
 
+    [Header("Sonido")]
+    public AudioClip hitSfx;
+
     // guarda el último tiempo que se dañó al jugador por este enemigo
     float lastDamageTime = -999f;
 
@@ -32,6 +35,15 @@ public class EnemyContactDamage : MonoBehaviour
         if (h == null) return;
 
         h.TakeDamage(contactDamage);
+
+        if (hitSfx != null)
+        {
+            AudioSource.PlayClipAtPoint(
+                hitSfx,
+                Camera.main != null ? Camera.main.transform.position : transform.position
+            );
+        }
+
         lastDamageTime = Time.time;
     }
 }

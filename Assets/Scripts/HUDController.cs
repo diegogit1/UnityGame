@@ -37,7 +37,7 @@ public class HUDController : MonoBehaviour
     {
         if (livesText == null) return;
         if (player != null)
-            livesText.text = $"HP: {player.currentHealth}/{player.maxHealth}";
+            livesText.text = $"HP: {player.currentHealth}";
         else
             livesText.text = "HP: ?";
     }
