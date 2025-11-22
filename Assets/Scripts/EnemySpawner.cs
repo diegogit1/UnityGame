@@ -18,10 +18,14 @@ public class EnemySpawner : MonoBehaviour
     public int enemiesPerSpawnHard = 2;
     private int enemiesPerSpawn = 1;
 
+    private float initialSpawnInterval;
+
     List<GameObject> alive = new List<GameObject>();
 
     void Start()
     {
+        initialSpawnInterval = spawnInterval; // guardamos el valor original
+
         if (enemyPrefab == null || spawnPoints == null || spawnPoints.Length == 0)
         {
             Debug.LogError("EnemySpawner: asigna enemyPrefab y al menos un spawnPoint.");
@@ -59,15 +63,18 @@ public class EnemySpawner : MonoBehaviour
     {
         if (hard)
         {
-            spawnInterval = Mathf.Max(0.5f, spawnInterval / 2f); // más rápido
-            maxAlive *= 2; // más enemigos activos
+            spawnInterval = initialSpawnInterval / 2f; // el doble de rápido que el valor base
+            enemiesPerSpawn = enemiesPerSpawnHard;
+            maxAlive = 60; // más enemigos activos
         }
         else
         {
-            spawnInterval = 2f; // valores normales
+            spawnInterval = initialSpawnInterval;
+            enemiesPerSpawn = enemiesPerSpawnNormal;
             maxAlive = 30;
         }
     }
+
 
 }
 

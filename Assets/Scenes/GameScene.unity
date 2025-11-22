@@ -22201,7 +22201,7 @@ MonoBehaviour:
   gameSceneName: GameScene
   gameOverSceneName: GameOver
   victorySceneName: Victory
-  levelDurationSeconds: 10
+  levelDurationSeconds: 100
   autoStartTimer: 1
   currentScore: 0
   lastScoreKey: LastScore
@@ -22455,6 +22455,8 @@ MonoBehaviour:
   initialDelay: 1
   spawnInterval: 15
   maxAlive: 20
+  enemiesPerSpawnNormal: 1
+  enemiesPerSpawnHard: 2
 --- !u!4 &933211673
 Transform:
   m_ObjectHideFlags: 0
@@ -22643,6 +22645,8 @@ MonoBehaviour:
   initialDelay: 1
   spawnInterval: 7.5
   maxAlive: 20
+  enemiesPerSpawnNormal: 1
+  enemiesPerSpawnHard: 2
 --- !u!4 &984837728
 Transform:
   m_ObjectHideFlags: 0
